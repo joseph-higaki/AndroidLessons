@@ -1,27 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.joseph.threadstest" >
+    package="com.example.usuario.contentproviderdemo" >
 
+
+    <uses-permission android:name="android.permission.READ_USER_DICTIONARY"></uses-permission>
     <application
         android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
+        <provider
+            android:name=".MyContentProvider"
+            android:authorities="com.example.usuario.contentproviderdemo.mycontentproviders"/>
+
         <activity
-            android:name=".MainActivity"
+            android:name=".QueryContentProviderActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-
-        <service android:name=".MyService" />
-
-        <activity
-            android:name=".CreateNotificationActivity"
-            android:label="@string/title_activity_create_notification" >
         </activity>
     </application>
 
