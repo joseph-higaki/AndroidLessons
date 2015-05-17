@@ -1,13 +1,18 @@
 package pe.edu.cibertect.facebookdemo;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ShareActionProvider;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,8 +28,12 @@ import com.facebook.login.widget.ProfilePictureView;
 import com.facebook.share.ShareApi;
 import com.facebook.share.Sharer;
 import com.facebook.share.model.ShareLinkContent;
+import com.facebook.share.model.SharePhoto;
+import com.facebook.share.model.SharePhotoContent;
 import com.facebook.share.widget.ShareDialog;
 
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import roboguice.activity.RoboActionBarActivity;
@@ -120,6 +129,65 @@ public class MainActivity extends RoboActionBarActivity{
 
     }
 
+
+    /*
+    *
+    * private static final int SELECT_PHOTO = 100;
+
+Start intent
+
+Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+photoPickerIntent.setType("image/*");
+startActivityForResult(photoPickerIntent, SELECT_PHOTO);
+
+Process result
+
+@Override
+protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
+    super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
+
+    switch(requestCode) {
+    case SELECT_PHOTO:
+        if(resultCode == RESULT_OK){
+            Uri selectedImage = imageReturnedIntent.getData();
+            InputStream imageStream = getContentResolver().openInputStream(selectedImage);
+            Bitmap yourSelectedImage = BitmapFactory.decodeStream(imageStream);
+        }
+    }
+}
+*/
+
+    /*
+    public void doPostPhoto(View view){
+        Bitmap imageBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.ic_);
+        SharePhoto sharePhoto = new SharePhoto.Builder()
+                .setBitmap(imageBitmap).build();
+        ArrayList<SharePhoto> photos = new ArrayList<>();
+        photos.add(sharePhoto);
+
+        SharePhotoContent sharePhotoContent = new SharePhotoContent.Builder()
+                .setPhotos(photos).build();
+
+        boolean canShareDialog = ShareDialog.canShow(SharePhotoContent.class);
+        if (canShareDialog) {
+            shareDialog.show(sharePhotoContent);
+        }else {
+            ShareApi.share(sharePhotoContent, sharedCallback);
+        }
+
+    }
+    */
+    private static final int SELECT_PHOTO = 100;
+    public void doPostPhoto(View view){
+
+        Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+        photoPickerIntent.setType("image/*");
+        startActivityForResult(photoPickerIntent, SELECT_PHOTO);
+
+
+
+    }
+
     public void doPost(View view){
         AccessToken accessToken = AccessToken.getCurrentAccessToken();
         if (accessToken != null){
@@ -168,5 +236,40 @@ public class MainActivity extends RoboActionBarActivity{
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         callbackManager.onActivityResult(requestCode, resultCode, data);
+
+        switch(requestCode) {
+            case SELECT_PHOTO:
+                if(resultCode == RESULT_OK){
+                    Uri selectedImage = data.getData();
+                    String[] filePathColumn = {MediaStore.Images.Media.DATA};
+
+                    Cursor cursor = getContentResolver().query(
+                            selectedImage, filePathColumn, null, null, null);
+                    cursor.moveToFirst();
+
+                    int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                    String filePath = cursor.getString(columnIndex);
+                    cursor.close();
+
+
+                    Bitmap yourSelectedImage = BitmapFactory.decodeFile(filePath);
+
+
+                    SharePhoto sharePhoto = new SharePhoto.Builder()
+                            .setBitmap(yourSelectedImage).build();
+                    ArrayList<SharePhoto> photos = new ArrayList<>();
+                    photos.add(sharePhoto);
+
+                    SharePhotoContent sharePhotoContent = new SharePhotoContent.Builder()
+                            .setPhotos(photos).build();
+
+                    boolean canShareDialog = ShareDialog.canShow(SharePhotoContent.class);
+                    if (canShareDialog) {
+                        shareDialog.show(sharePhotoContent);
+                    }else {
+                        ShareApi.share(sharePhotoContent, sharedCallback);
+                    }
+                }
+        }
     }
 }

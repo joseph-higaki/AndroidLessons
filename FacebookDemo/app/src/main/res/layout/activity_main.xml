@@ -26,10 +26,15 @@
 
         </com.facebook.login.widget.ProfilePictureView>
     <Button
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="Post"
+    android:onClick="doPost"/>
+    <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Post"
-        android:onClick="doPost"/>
+        android:text="PostPhoto"
+        android:onClick="doPostPhoto"/>
 
 
 
