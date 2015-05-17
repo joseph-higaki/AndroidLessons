@@ -27,12 +27,16 @@ import com.facebook.share.widget.ShareDialog;
 
 import java.util.Arrays;
 
+import roboguice.activity.RoboActionBarActivity;
+import roboguice.inject.ContentView;
+import roboguice.inject.InjectView;
 
-public class MainActivity extends ActionBarActivity {
+@ContentView(R.layout.activity_main)
+public class MainActivity extends RoboActionBarActivity{
 
-    CallbackManager callbackManager;
-    TextView txvProfile;
-    ProfilePictureView pictureView;
+    private CallbackManager callbackManager;
+    @InjectView(R.id.txvProfile) private  TextView txvProfile;
+    @InjectView(R.id.profilePictureView) private ProfilePictureView pictureView;
     String PERMISSION = "publish_actions";
 
     ShareDialog shareDialog;
@@ -63,9 +67,10 @@ public class MainActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        FacebookSdk.sdkInitialize(getApplicationContext());
         super.onCreate(savedInstanceState);
 
-        FacebookSdk.sdkInitialize(getApplicationContext());
+
         callbackManager = CallbackManager.Factory.create();
         LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
@@ -89,10 +94,15 @@ public class MainActivity extends ActionBarActivity {
 
         shareDialog= new ShareDialog(this);
         shareDialog.registerCallback(callbackManager, sharedCallback);
-        setContentView(R.layout.activity_main);
+        //setContentView(R.layout.activity_main);
+        //replaced by @ContentView(R.layout.activity_main)
 
-        txvProfile = (TextView) findViewById(R.id.txvProfile);
-        pictureView  = (ProfilePictureView) findViewById(R.id.profilePictureView);
+        //txvProfile = (TextView) findViewById(R.id.txvProfile);
+        //replaced by @InjectView(R.id.txvProfile)
+
+        //pictureView  = (ProfilePictureView) findViewById(R.id.profilePictureView);
+        //replaced by  @InjectView(R.id.profilePictureView)
+
         updateUI();
 
     }
@@ -117,13 +127,13 @@ public class MainActivity extends ActionBarActivity {
             if (permissions){
                 Profile profile = Profile.getCurrentProfile();
                 ShareLinkContent shareLinkContent = new ShareLinkContent.Builder()
-                        .setContentTitle("clase")
+                        .setContentTitle("clase de android babrbrbrbr, me quiero tirar al rio")
                         .setContentDescription("description, facebook integration")
-                        .setContentUrl(Uri.parse("www.google.com"))
+                        .setContentUrl(Uri.parse("www.surfline.com"))
                         .build();
 
-                shareDialog.show(shareLinkContent);
-                //ShareApi.share(shareLinkContent, sharedCallback);
+                //shareDialog.show(shareLinkContent);
+                ShareApi.share(shareLinkContent, sharedCallback);
 
             }else{
                 LoginManager.getInstance().logInWithPublishPermissions(this, Arrays.asList(PERMISSION));
