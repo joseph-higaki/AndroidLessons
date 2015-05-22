@@ -50,6 +50,7 @@ public class LoginActivity extends RoboActivity {
 
     private void loginSuccess(){
         Intent intent = new Intent(this, TeamPlayerListActivity.class);
+        Log.d("tournamentcalendar", "loginSuccess");
         startActivity(intent);
     }
 
@@ -91,6 +92,7 @@ public class LoginActivity extends RoboActivity {
     }
 
     public void pretendFacebookLoginWorks(View view) {
+        Log.d("tournamentcalendar", "pretendFacebookLoginWorks");
         loginSuccess();
     }
 }
